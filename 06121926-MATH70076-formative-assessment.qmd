@@ -1,0 +1,630 @@
+---
+title: "MATH70076: Data Science - Formative Assessment"
+subtitle: 'MSc in Statistics 2026/27, Imperial College London'
+author: "YOUR CID"
+format:
+  html:
+    toc: true
+    highlight: tango
+    self-contained: true
+    tbl-cap-location: bottom
+  pdf: default
+format-links: false
+bibliography: example.bib 
+---
+
+**Deadline: Monday 12 October 2026 at 13:00.**
+
+*For this formative assessment you should submit two files via the Imperial College VLE on Canvas by the deadline stated above. Your files should be named as follows:*
+
+- `YOURCID-MATH70076-formative-assessment.pdf`: your rendered report,
+- `YOURCID-MATH70076-formative-assessment.zip`: a zip file containing the relevant source code to generate your report.
+
+*All submitted materials should be clearly presented and be understandable as stand-alone documents.*
+
+*Please note that large files can take quite some time to upload. Ensure that you upload each document to the correct part of the learning space in a timely manner.*
+
+*This mock coursework is a formative assessment and so will not contribute to your overall grade for the module. It is designed for you to practice the skills you have learned in the first workshop and to get feedback on your reflective writing style. This activity is expected to take approximately 6 hours of individual effort. Assessment criteria are given in the "set yourself up for success" boxes. Satisfying 18 or more out of these 23 criteria corresponds to a notional "pass" grade.*
+
+*In submitting this mock assessment you certify that it is entirely your own work, apart from where otherwise acknowledged, and includes no plagiarism. Note that software tools are used as part of plagiarism detection.*
+
+------------------------------------------------------------------------
+
+## Background
+
+### Generalised Pareto Distribution
+
+The Generalized Pareto Distribution (GPD) is a flexible family of continuous probability distributions that arises naturally in extreme value theory, particularly for modelling the distribution of excesses over a threshold. It is parametrised by a shape parameter $\xi \in \mathbb{R}$, a scale parameter $\sigma > 0$, and a location parameter $u \in \mathbb{R}$. Its cumulative distribution function (CDF) is given by
+
+$$
+F(x;\,\sigma,\xi, u) = 
+\begin{cases}
+1 - \left(1 + \dfrac{\xi (x-u)}{\sigma}\right)_+^{-1/\xi}, & \xi \neq 0, \, x \geq u; \; \\[1.2em]
+1 - \exp\!\left(-\dfrac{x-u}{\sigma}\right), & \xi = 0, \, x \geq u;
+\end{cases}
+$$ {#eq-gpd-cdf}
+
+where $x_+ = \max(x,0)$ and its probability density function (PDF) is
+
+$$
+f(x;\sigma,\xi,u) =
+\begin{cases}
+\dfrac{1}{\sigma}\left(1 + \dfrac{\xi (x-u)}{\sigma}\right)_+^{-1/\xi - 1}, & \xi \neq 0, \\[1.2em]
+\dfrac{1}{\sigma}\exp\!\left(-\dfrac{x-u}{\sigma}\right), & \xi = 0,
+\end{cases}
+$$ {#eq-gpd-pdf}
+
+defined on the same support as the CDF. The GPD encompasses a variety of tail behaviours:
+
+- when $\xi > 0$ the GPD has heavy, slowly decaying tails,
+- in limiting case when $\xi \rightarrow 0$ the GPD reduces to an exponential distribution;
+- when $\xi < 0$ the GPD has light, quickly decaying tails with a finite upper endpoint of $x^+ = u - \sigma / \xi$.
+
+### Probability Integral Transform
+
+The probability integral transform states that if a random variable $X$ has a continuous cumulative distribution function $F_X(x)$, then the transformed variable $A = F_X(X)$ follows a uniform distribution on $[0,1]$. Conversely, if $F$ is an invertible function then $Y = F^{-1}_X(A)$ has the same distribution as $X$.
+
+## Questions
+
+### Question 1
+
+Derive an expression for the inverse cumulative distribution function (also known as the quantile function) $F^{-1}_X: [0,1] \rightarrow [u, x^+]$ of $X \sim \text{GPD}(u, \sigma, \xi)$. Your answer should refer to at least one equation given in the background material.
+
+::: callout-tip
+## Set yourself up for success
+
+Does your answer contain:
+
+- a few sentences of text describing your approach to the problem;
+- a reference to at least one equation from the background section;
+- a correctly formatted LaTeX equation;
+- a valid approach to the problem and correct expression.
+:::
+
+The inverse of a function requires the function to be bijective i.e., injective and surjective. So we need to show @eq-gpd-cdf is bijective.
+
+***Injective***
+
+The CDF @eq-gpd-cdf needs to be strictly monotonic for it to be injective. We can evaluate its derivative with respect to x and see if the derivative is always greater than zero. Note that
+
+$$
+F'_X(x; \sigma,\xi,u) = f_X(x;\sigma,\xi,u)
+$$
+
+Thus we can look at the sign of the PDF @eq-gpd-pdf. Let
+
+$$
+a\left(x\right)=\frac{1}{\sigma}\left(1+\frac{\xi\left(x-u\right)}{\sigma}\right)_+
+$$
+
+$$
+b=-1-1/\xi
+$$
+
+Note that $a\left(x\right)^b$ is strictly positive if $a\left(x\right)\gt 0$
+
+1.  If $\xi = 0$
+    - $f_X$ is positive as $exp^z\gt 0$ for $\forall z\in\mathbb{R}$.
+2.  If $\xi < 0$
+    - the condition $\left(\;\right)_+$ restricts $x\in\left[\mu, \frac{\sigma}{|\xi|}+\mu\right]$
+    - then f is of the form $a\left(x\right)^b$ where $a\left(x\right)\geq 0$
+    - if $x\in\left[\mu, \frac{\sigma}{|\xi|}+\mu\right)$ then $a\left(x\right)\gt 0$
+3.  If $\xi\gt 0$
+    - then f is of the form $a\left(x\right)^b$ where $a\left(x\right)\gt 0$
+
+Thus the CDF is injective
+
+***Surjective***
+
+Under the three cases of $\xi$, $F_X$ is continuous
+
+1.  If $\xi = 0$
+    - $F_X : \left[\mu,\infty\right)\to\left[0,1\right)$
+2.  If $\xi < 0$
+    - $a\left(\mu\right)= 1$, so $F_X\left(\mu\right)=0$
+    - $a\left(\mu-\frac{\sigma}{\xi}\right)= 0$, so $F_X\left(\mu-\frac{\sigma}{\xi}\right)=1$
+    - $F_X : \left[\mu,\mu-\frac{\sigma}{\xi}\right)\to\left[0,1\right)$
+3.  If $\xi\gt 0$
+    - $a\left(\mu\right)= 1$, so $F_X\left(\mu\right)=0$
+    - $lim_{x\to\infty}F_X\left(x\right)\to1$ as $lim_{x\to\infty}a\left(x\right)\to\infty$ and hence $lim_{x\to\infty}\frac{1}{a\left(x\right)^\xi}\to0$
+    - $F_X : \left[\mu,\infty\right)\to\left[0,1\right)$
+
+Thus for $range\left(F_X\right) = \left[0,1\right)$, the support of x exists
+
+***Inverse***
+
+$F_X^{-1}\left(A\right)$ is given by
+
+$$
+F_X^{-1}\left(A\right)=
+\begin{cases}
+\mu-\sigma*ln\left(1-A\right)\quad,&\quad\xi = 0
+\\
+\mu+\frac{\sigma}{\xi}\left[\left(1-A\right)^{-\xi}-1\right]\quad,&\quad\xi\neq 0
+\end{cases}
+$$
+
+with the relevant range determined by the value of $\xi$
+
+### Question 2
+
+*For this question you should display the R code you use to define and document `qgpd()` within the main text of your report.*
+
+(a) Write and document your own function `qgpd()` to calculate quantiles of a given generalised Pareto distribution. Your function should have inputs and behaviour similar to the built-in R functions such as `qnorm()` and `qunif()` and check that inputs are in the correct format.
+
+(b) Suppose a random variable $X$ follows an generalised Pareto distribution with threshold parameter $u=1.5$, scale parameter $\sigma = 2$ and shape parameter $\xi = -0.4$. Use your function to find quantiles $x_p$ for $p = 0.5, 0.75, 0.99$ (i.e. for each $p$ find the value for which $\Pr(X < x_p) = p$).
+
+::: callout-tip
+## Set yourself up for success
+
+Does your answer:
+
+- contain a valid R function definition;
+- document the expected inputs, outputs and behaviours of that function;
+- check the validity of inputs;
+- handle any edge-cases in an appropriate way;
+- return the correct quantile values?
+:::
+
+```{r}
+# (a)
+#' A function to calculate the quantiles of the generalised Pareto distribution 
+#' 
+#' @param a numeric. A probability value or vector of probability values
+#' @param xi numeric. A shape parameter in (-inf, +inf) 
+#' @param mu numeric. A location parameter in (-inf, inf) 
+#' @param sigma numeric. A scale parameter > 0 
+#' 
+#' @return The quantile x(i) for which P(X\<=x(i))=a(i), for each of the a(i) in a
+
+qgpd = function(a, xi, mu, sigma){ 
+  # check args have correct type 
+  stopifnot(
+    is.numeric(a), 
+    is.numeric(xi), 
+    is.numeric(mu), 
+    is.numeric(sigma)
+    ) 
+
+  # check params are not vectors
+  stopifnot(
+    length(xi)==1,
+    length(mu)==1,
+    length(sigma)==1
+  )
+  
+  # check values are valid 
+  stopifnot( 
+    sigma > 0, 
+    all(0 <= a & a <= 1)
+  )
+  
+  if (xi == 0){ 
+    value = mu - sigma * log(1-a) 
+  } else { 
+    value = mu + (sigma/xi)*( (1-a)^(-xi) - 1 )
+  }
+
+  return(value)
+  }
+```
+
+```{r}
+# (b)
+a = c(0,0.5,0.75,0.99,1)
+xi=-0.4
+mu=1.5
+sigma=2
+qgpd(a,xi,mu,sigma)
+```
+Check:  For $\xi\lt0,  x\in \left[\mu,\mu-\frac{\sigma}{\xi}\right) = \left[1.5,6.5\right)$
+
+
+### Question 3
+
+*For this question, all R code should be displayed only within the appendix, not in the main report.*
+
+The file `gpd_samples.csv` contains six sets of random variates generated from different generalised Pareto distributions. The details of the generalised Pareto distributions used are summarised in `gpd_parameters.csv`. Unfortunately some of the parameter sets were recorded incorrectly.
+
+Within a single figure, construct a series of quantile-quantile plots to identify which datasets are inconsistent with their stated distributions. You should both justify your conclusions and describe your level of confidence in your findings.
+
+::: callout-tip
+## Set yourself up for success
+
+Does your solution contain:
+
+- at least one quantile-quantile plot;
+- six qq-plots in a single figure;
+- use of loops, vectorisation, or function definitions to avoid repetitive code.
+- figures with clear text, useful captions and appropriate visual mapping of data;
+- a few paragraphs describing and justifying your findings and referencing the figure;
+:::
+
+<!-- YOUR ANSWER GOES HERE -->
+```{r}
+#| echo: false
+#| label: fig-gpd-qq
+#| fig-cap: "Comparing externally generated gpd (supplied with claimed parameters) with a theoretic gpd calculated from the same claimed parameters"
+
+# --- PLOT FUNC
+gpd_qq_plot = function(sample, mu, sigma, xi, id){
+  
+  num_points = length(sample)
+  sorted_sample = sort(sample)
+  
+  # feed in a set of probabilities to invert to gpd using $F^{-1}$
+  prob_points = ppoints(num_points)
+  theoretic_quantiles = qgpd(prob_points, xi, mu, sigma)
+  
+  plot(
+    theoretic_quantiles,
+    sorted_sample,
+    main=paste0(
+      '(', id, ') Sample ',id,
+      '\nmu= ', mu, ' , sigma= ', sigma, ' , xi= ', xi,
+      '\nnum of observations= ', num_points
+    ),
+    xlab='Theoretically Calculated GPD',
+    ylab='Sample GPD'
+  )
+
+  abline(a=0, b=1) # help is not helpful, doesn't tell you which is intercept, or slope
+}
+
+# ---
+
+
+samples <- read.csv('gpd_samples.csv')
+# head(samples)
+sample_ids = unique(samples$set_id)
+num_sample_ids = length(sample_ids)
+
+params <- read.csv('gpd_parameters.csv')
+# head(params)
+
+# have dynamic num of samples so layout-ncol doesn't work
+par(mfrow=c(2,num_sample_ids/2))  # ok, so i need to know there is 6 anyway...
+
+for (id in sample_ids){
+  sample = samples$value[samples$set_id == id]
+  
+  param_set = params[params$id == id, ]
+  mu = param_set$u
+  sigma = param_set$sigma
+  xi = param_set$xi
+  
+  gpd_qq_plot(sample, mu, sigma, xi, id)
+
+}
+
+
+
+```
+
+Each figure in @fig-gpd-qq shows a line y=x, with the points of the gpd shown in relation to it. If the Sample GPD is actually distributed as a GPD, with the stated parameters, the points of the sample and the theoretical GPD should fall around this line.
+
+With this in mind, Sample b and e's parameters are correct.
+
+Samples a (xi<0), c (xi=0), and f (xi>0) follow the same pattern. 
+The majority of the quantiles looks correct, but the right hand tail looks heavier in the Sample. 
+It is also the case that these samples have the fewest observations. 
+I would be tempted to accept the parameters are correct, but winsorise the data if I needed to use it.
+
+Sample d is consistently under the line so I think its parameters are erroneous.
+
+
+### Question 4
+
+*For this question, all R code should be displayed only within the appendix, not in the main report.*
+
+A hydrologist is interested in understanding the river flow at a location that is historically prone to flooding. There is a river flow gauge nearby which measures river flow in units of cubic meters per second ($\text{m}^3/\text{s}$ or cumecs). Based on her knowledge of other rivers, the hydrologist proposes that for this river gauge:
+
+- the distribution of river flow values is constant over time
+- for river flows exceeding 75 cumecs, it is appropriate to model these data as independent and identically distributed GPD($\sigma =29.7$, $\xi=0.62$, $u = 0$).
+
+Use `riverflow_2015-2024.csv` to conduct an exploratory investigation of whether these proposals are valid for the dataset provided. Summarise your findings in 250-350 words, supporting these with a collection of 4 visualisations/figures.
+
+::: callout-tip
+## Set yourself up for success
+
+Does your answer contain:
+
+- 400-500 words of text clearly describing your choice of visualisations, their interpretation and your conclusions about the validity of each assumption,
+- A series of 4 visualisations / figures,
+- A varied and appropriate choice of figures to investigate each of the hydrologist's proposals,
+- Figures with clear text, useful captions and appropriate visual mapping of data;
+- At least one reference to each visualisation within the main text.
+:::
+
+<!-- YOUR INVESTIGATION GOES HERE -->
+```{r}
+#| echo: false
+#| label: get-data
+
+flow_data <- read.csv('riverflow_2015_2024.csv', na.strings = c("", "NA"))
+# unlikely river flow distribution is stationary, expect different behavior e.g., in winter vs summer 
+
+# plot flow vs time to see what we are dealing with
+
+# names(flow_data) #  not sure what baseline_mean is
+
+# so plot doesn't work as missing data
+
+num_na_date = sum(is.na(flow_data$date))
+num_na_flow = sum(is.na(flow_data$flow))
+# print(c(num_na_flow, num_na_date))
+
+len_date = length(flow_data$date)
+len_flow = length(flow_data$flow)
+# print(c(len_date, len_flow))
+
+
+# confused - check blanks? add para to read.csv
+# not missing, so inf?
+
+# head(flow_data)
+# date is str...
+dates <- as.Date(flow_data$date)
+
+```
+
+
+---
+
+**Simple Plot**
+
+
+```{r}
+#| echo: false
+#| label: fig-rf-basic
+#| fig-cap: "Observed river flow in cumecs over a 10 year period"
+#| fig-width: 15
+
+plot(
+  x=dates,
+  y=flow_data$flow,
+  xlab='date',
+  ylab='flow: m^3 per sec',
+  type='l',
+  xaxt='n',
+  main= 'Observed values of river flow (cumecs) over time'
+)
+
+axis.Date(1, at = seq(min(dates), max(dates), by = "year"), format = "%Y", las=2)
+
+```
+
+@fig-rf-basic shows substantial outliers and seasonality, with local peaks in what looks like Q2 and end Q3. Wonder if could use fourier transforms to find a frequency (don't remember how to do that).
+
+---
+
+**Box Plot**
+
+
+Let's see if chunking into years shows similar distributions. I think it makes more sense to split into end Q1 to end Q1, but as data starts at year start, lets first look at full year blocks.
+
+```{r}
+#| echo: false
+#| label: fig-rf-box
+#| fig-cap: "Box plots of observed river flow by one year periods."
+
+start_date = as.Date("2015-01-01")
+boundaries <- seq(start_date, max(dates), by='year')
+# print(boundaries)
+if ( format(start_date, '%m')=='01' & format(start_date, '%d')=='01' ){
+  boundaries = c(boundaries, as.Date("2025-01-01"))  
+}
+# print(boundaries)
+
+periods <- cut(dates, breaks=boundaries, right=FALSE, labels=FALSE)
+
+# print(length(dates))
+# print(length(periods))
+
+# join data then trim to keep rows periods != NA
+box_data = data.frame(dates = dates, flow = flow_data$flow, periods=periods)
+# print(dim(box_data))
+box_data = box_data[!is.na(box_data$periods), ]
+# print(dim(box_data))
+
+#boxplot(flow~periods, data = box_data)
+# winsorize at 600
+
+winsor_cap = 600
+box_data$flow = pmin(box_data$flow, winsor_cap)
+my_boxplot <- boxplot(
+  flow ~ periods, 
+  data = box_data,
+  main = paste0('Observed river flow per one year periods commencing ', start_date),
+  xlab = 'period',
+  ylab = 'flow in cumecs (one data point truncated to 600 cumecs)'
+  )
+
+```
+The outliers squash the data inside the whiskers. Let's explicitly compare the main parts of the distributions inside the whiskers.
+
+---
+
+**Stats**
+
+
+```{r}
+#| echo: false
+#| label: tbl-rf-box
+#| tbl-cap: "Summary stats for each of the periods in @fig-rf-box"
+
+means <- aggregate(
+  flow ~ periods, 
+  data = box_data,
+  mean
+)
+s_stats <- data.frame(
+  Periods = my_boxplot$names,
+  Mean = means$flow,
+  Lower_Whisker = my_boxplot$stats[1, ],
+  Q1 = my_boxplot$stats[2, ],
+  Median = my_boxplot$stats[3, ],
+  Q3 = my_boxplot$stats[4, ],
+  Upper_Whisker = my_boxplot$stats[5, ]
+)
+
+knitr::kable(
+  s_stats,
+  digits=2,
+  align = 'c'
+)
+
+```
+
+The statistics in @tbl-rf-box show a positive gradient in all of the columns indicating that river flow is increasing year on year.
+ 
+---
+
+**Model river flows greater than 75 cumecs as a GPD**
+
+
+```{r}
+#| echo: false
+#| label: fig-rf-qq
+#| fig-cap: "QQ plot of sample data above mu, versus proposed gpd (mu, sigma, xi)"
+#| 
+cut_off<-75
+# data was offset, hadn't minused the cutoff before
+flow_samples <- flow_data$flow[flow_data$flow > cut_off]
+# head(flow_samples)
+# length(flow_samples)
+
+mu<-cut_off
+sigma<-29.7
+xi<-0.62
+id<-1
+
+gpd_qq_plot(sample=flow_samples, mu=mu, sigma=sigma, xi=xi, id=id)
+
+```
+
+The plot @fig-rf-qq shows that the proposed xi is too large for the sample as the extreme tail is below the y=x line. This is apparent for the extreme 6 values in the tail, out of the total of 158 observations.
+
+---
+
+<br><br>
+**Analyse De-trended Data**
+
+
+```{r}
+#| layout-ncol: 1
+#| label: fig-detrend
+#| fig-cap: "De-trending the periodic flow data by the period medians"
+#| fig-subcap:
+#|    - "A linear model for the median of a period"
+#|    - "Detrended box plots obtained by subtracting the model from observed flows"
+#| echo: false
+
+
+# quick look at de-trend
+medians <- aggregate(
+  flow ~ periods,
+  data = box_data,
+  median
+)
+
+
+trend <- lm(flow ~ periods, data = medians)
+
+plot(
+  medians$periods,
+  medians$flow,
+  xlab = "Period",
+  ylab = "Median flow"
+)
+
+abline(trend)
+
+box_data$detrended_flow <- box_data$flow - predict(trend, newdata = box_data)
+
+my_boxplot_detrended <- boxplot(
+  detrended_flow ~ periods, 
+  data = box_data,
+  main = paste0('Detrended observed river flow per one year periods commencing ', start_date),
+  xlab = 'period',
+  ylab = 'flow in cumecs'
+  )
+
+
+# 
+```
+
+
+<br><br>
+As before, looking at the summary stats gives more granular information.
+
+_Summary Stats_
+
+
+```{r}
+#| echo: false
+#| label: tbl-detrend
+#| tbl-cap: "Summary stats for each of the periods in @fig-detrend"
+
+detrended_means <- aggregate(
+  detrended_flow ~ periods, 
+  data = box_data,
+  mean
+)
+
+s_stats_detrended <- data.frame(
+  Periods = my_boxplot_detrended$names,
+  Mean = detrended_means$detrended_flow,
+  Lower_Whisker = my_boxplot_detrended$stats[1, ],
+  Q1 = my_boxplot_detrended$stats[2, ],
+  Median = my_boxplot_detrended$stats[3, ],
+  Q3 = my_boxplot_detrended$stats[4, ],
+  Upper_Whisker = my_boxplot_detrended$stats[5, ]
+)
+
+knitr::kable(
+  s_stats_detrended,
+  digits=2,
+  align = 'c'
+)
+
+```
+
+---
+
+::: callout-tip
+## Set yourself up for success
+
+- Does your document render without any formatting issues?
+:::
+
+## Question 5 Reflective Summary
+
+Describe, evidence and reflect on the process of constructing the visualisations in your answer to Question 4.
+
+Your response should be 300-400 words and might, for example, comment on:
+
+- why you chose these forms of visualisation and what alternatives you considered;
+- a challenge you faced or something that you learned while making the visualisations;
+- how you might approach this task differently with more time or for a different intended audience.
+
+::: callout-tip
+## Set yourself up for success
+
+Does your response:
+
+- describe how you engaged with the visualisation activity;
+- give specific evidence of that engagement;
+- critically reflection on that engagement?
+:::
+
+*End of Assessment.*
+
+# Code Appendix {#sec-code-appendix}
+
+```{r ref.label=c('fig-gpd-qq', 'get-data', 'fig-rf-basic', 'fig-rf-box', 'tbl-rf-box', 
+'fig-rf-qq', 'fig-detrend', 'tbl-detrend')}
+#| echo: true
+#| eval: false
+#| code-fold: true
+```
