@@ -1,7 +1,7 @@
 ---
 title: "MATH70076: Data Science - Formative Assessment"
 subtitle: 'MSc in Statistics 2026/27, Imperial College London'
-author: "YOUR CID"
+author: "06121926"
 format:
   html:
     toc: true
@@ -17,8 +17,8 @@ bibliography: example.bib
 
 *For this formative assessment you should submit two files via the Imperial College VLE on Canvas by the deadline stated above. Your files should be named as follows:*
 
-- `YOURCID-MATH70076-formative-assessment.pdf`: your rendered report,
-- `YOURCID-MATH70076-formative-assessment.zip`: a zip file containing the relevant source code to generate your report.
+- `06121926-MATH70076-formative-assessment.pdf`: your rendered report,
+- `06121926-MATH70076-formative-assessment.zip`: a zip file containing the relevant source code to generate your report.
 
 *All submitted materials should be clearly presented and be understandable as stand-alone documents.*
 
@@ -101,22 +101,22 @@ $$
 b=-1-1/\xi
 $$
 
-Note that $a\left(x\right)^b$ is strictly positive if $a\left(x\right)\gt 0$
+Note that $a\left(x\right)^b$ is strictly positive if $a\left(x\right)> 0$
 
 1.  If $\xi = 0$
-    - $f_X$ is positive as $exp^z\gt 0$ for $\forall z\in\mathbb{R}$.
+    - $f_X$ is positive as $exp^z > 0$ for $\forall z\in\mathbb{R}$.
 2.  If $\xi < 0$
     - the condition $\left(\;\right)_+$ restricts $x\in\left[\mu, \frac{\sigma}{|\xi|}+\mu\right]$
-    - then f is of the form $a\left(x\right)^b$ where $a\left(x\right)\geq 0$
-    - if $x\in\left[\mu, \frac{\sigma}{|\xi|}+\mu\right)$ then $a\left(x\right)\gt 0$
-3.  If $\xi\gt 0$
-    - then f is of the form $a\left(x\right)^b$ where $a\left(x\right)\gt 0$
+    - then f is of the form $a\left(x\right)^b$ where $a\left(x\right)\geq0$
+    - if $x\in\left[\mu, \frac{\sigma}{|\xi|}+\mu\right)$ then $a\left(x\right)>0$
+3.  If $\xi>0$
+    - then f is of the form $a\left(x\right)^b$ where $a\left(x\right)>0$
 
 Thus the CDF is injective
 
 ***Surjective***
 
-Under the three cases of $\xi$, $F_X$ is continuous
+Under the three cases of $\xi$, $F_X$ is continuous. The boundaries of the domain are established in order to determine the boundaries of the range.
 
 1.  If $\xi = 0$
     - $F_X : \left[\mu,\infty\right)\to\left[0,1\right)$
@@ -124,12 +124,12 @@ Under the three cases of $\xi$, $F_X$ is continuous
     - $a\left(\mu\right)= 1$, so $F_X\left(\mu\right)=0$
     - $a\left(\mu-\frac{\sigma}{\xi}\right)= 0$, so $F_X\left(\mu-\frac{\sigma}{\xi}\right)=1$
     - $F_X : \left[\mu,\mu-\frac{\sigma}{\xi}\right)\to\left[0,1\right)$
-3.  If $\xi\gt 0$
+3.  If $\xi>0$
     - $a\left(\mu\right)= 1$, so $F_X\left(\mu\right)=0$
     - $lim_{x\to\infty}F_X\left(x\right)\to1$ as $lim_{x\to\infty}a\left(x\right)\to\infty$ and hence $lim_{x\to\infty}\frac{1}{a\left(x\right)^\xi}\to0$
     - $F_X : \left[\mu,\infty\right)\to\left[0,1\right)$
 
-Thus for $range\left(F_X\right) = \left[0,1\right)$, the support of x exists
+Thus for $range\left(F_X\right) = \left[0,1\right)$, there exists an x in the $domain\left(F_X\right)$
 
 ***Inverse***
 
@@ -142,7 +142,7 @@ F_X^{-1}\left(A\right)=
 \\
 \mu+\frac{\sigma}{\xi}\left[\left(1-A\right)^{-\xi}-1\right]\quad,&\quad\xi\neq 0
 \end{cases}
-$$
+$${#eq-qgpd-pdf}
 
 with the relevant range determined by the value of $\xi$
 
@@ -168,19 +168,21 @@ Does your answer:
 
 ```{r}
 # (a)
-#' A function to calculate the quantiles of the generalised Pareto distribution 
+#' A function to calculate the quantiles of the 
+#'  generalised Pareto distribution 
 #' 
-#' @param a numeric. A probability value or vector of probability values
+#' @param alpha numeric. A probability value or vector of probability values
 #' @param xi numeric. A shape parameter in (-inf, +inf) 
 #' @param mu numeric. A location parameter in (-inf, inf) 
 #' @param sigma numeric. A scale parameter > 0 
 #' 
-#' @return The quantile x(i) for which P(X\<=x(i))=a(i), for each of the a(i) in a
+#' @return The quantile x(i) for which P(X\<=x(i))=alpha(i), 
+#'  for each of the alpha(i) in alpha
 
-qgpd = function(a, xi, mu, sigma){ 
+qgpd = function(alpha, xi, mu, sigma){ 
   # check args have correct type 
   stopifnot(
-    is.numeric(a), 
+    is.numeric(alpha), 
     is.numeric(xi), 
     is.numeric(mu), 
     is.numeric(sigma)
@@ -196,13 +198,13 @@ qgpd = function(a, xi, mu, sigma){
   # check values are valid 
   stopifnot( 
     sigma > 0, 
-    all(0 <= a & a <= 1)
+    all(0 <= alpha & alpha <= 1)
   )
   
   if (xi == 0){ 
-    value = mu - sigma * log(1-a) 
+    value = mu - sigma * log(1-alpha) 
   } else { 
-    value = mu + (sigma/xi)*( (1-a)^(-xi) - 1 )
+    value = mu + (sigma/xi)*( (1-alpha)^(-xi) - 1 )
   }
 
   return(value)
@@ -211,14 +213,14 @@ qgpd = function(a, xi, mu, sigma){
 
 ```{r}
 # (b)
-a = c(0,0.5,0.75,0.99,1)
+alpha = c(0,0.5,0.75,0.99,1)
 xi=-0.4
 mu=1.5
 sigma=2
-qgpd(a,xi,mu,sigma)
+qgpd(alpha,xi,mu,sigma)
 ```
-Check:  For $\xi\lt0,  x\in \left[\mu,\mu-\frac{\sigma}{\xi}\right) = \left[1.5,6.5\right)$
 
+Check: For $\xi<0,  x\in \left[\mu,\mu-\frac{\sigma}{\xi}\right) = \left[1.5,6.5\right)$
 
 ### Question 3
 
@@ -241,6 +243,7 @@ Does your solution contain:
 :::
 
 <!-- YOUR ANSWER GOES HERE -->
+
 ```{r}
 #| echo: false
 #| label: fig-gpd-qq
@@ -305,13 +308,9 @@ Each figure in @fig-gpd-qq shows a line y=x, with the points of the gpd shown in
 
 With this in mind, Sample b and e's parameters are correct.
 
-Samples a (xi<0), c (xi=0), and f (xi>0) follow the same pattern. 
-The majority of the quantiles looks correct, but the right hand tail looks heavier in the Sample. 
-It is also the case that these samples have the fewest observations. 
-I would be tempted to accept the parameters are correct, but winsorise the data if I needed to use it.
+Samples a (xi<0), c (xi=0), and f (xi>0) follow the same pattern. The majority of the quantiles looks correct, but the right hand tail looks heavier in the Sample. It is also the case that these samples have the fewest observations. I would be tempted to accept the parameters are correct, but winsorise the data if I needed to use it.
 
 Sample d is consistently under the line so I think its parameters are erroneous.
-
 
 ### Question 4
 
@@ -337,6 +336,26 @@ Does your answer contain:
 :::
 
 <!-- YOUR INVESTIGATION GOES HERE -->
+
+This section of the course work focuses on exploring the distribution of the flow of a river over time. The objective is to determine whether the distribution is stationary and if a proposed distribution fits the data.
+
+I have an a piori assumption that the data would have seasonality. In order to check this and to start to understand the data, I plot the data @fig-rf-basic. The figure shows substantial outliers and seasonality, with local peaks in what looks like Q2 and end Q3.  [Wonder if could use fourier transforms to find a frequency (don't remember how to do that).]
+
+Seasonality should be consistent on an annual basis, hence splitting the data into one year periods makes sense. In addition, given the outliers, it could be the case that the best way to think about this data is as a continuous distribution plus a rare jump process. It makes sense to analyse this using a box plot which nicely gives non-model based analysis of the core of the distribution. The box plots are shown in @fig-rf-box. 
+
+It wasn't clear to me if there would be a dependence on when the year points would start, so I made this a variable (start_date) in the code. It turns out it doesn't matter. This can be more easily observed by looking at changes in @tbl-rf-box as the start-date is changed. I settle on keeping start_date as the start date of the data in order to have 10, rather than 9, sets of annual data. 
+
+The outliers in @fig-rf-box squash the data inside the whiskers so the visual information is of limited value. The statistics in @tbl-rf-box provide more useful information on the core of the distribution. The data implies that there is an increasing drift in the 'non-jumpy' data, i.e., the median, mean, Q1 and Q3 have a positive gradient.
+
+To explore this further, I made a simple attempt to de-trend the data. To first test the observation, I fitted a linear model for the best fit median flow in a year block vs year block. The results are show in @fig-detrend-1. There is a clear linear relationship.
+
+I then subtract the model implied median from the data, subtracting a single number for each annual data block. I redo the box-plots @fig-detrend-2 and statistics @tbl-detrend. 
+
+@tbl-detrend shows the median, mean, Q1 and Q3 are consistent and hence, excluding the fat tails or jump process, the core is likely to be stationary.
+
+---
+
+
 ```{r}
 #| echo: false
 #| label: get-data
@@ -369,9 +388,6 @@ dates <- as.Date(flow_data$date)
 ```
 
 
----
-
-**Simple Plot**
 
 
 ```{r}
@@ -379,6 +395,8 @@ dates <- as.Date(flow_data$date)
 #| label: fig-rf-basic
 #| fig-cap: "Observed river flow in cumecs over a 10 year period"
 #| fig-width: 15
+#| fig-height: 10
+#| fig-pos: 'H'
 
 plot(
   x=dates,
@@ -387,26 +405,28 @@ plot(
   ylab='flow: m^3 per sec',
   type='l',
   xaxt='n',
-  main= 'Observed values of river flow (cumecs) over time'
+  main= 'Observed values of river flow (cumecs) over time',
+  cex.main=1.5,
+  cex.lab=1.5
 )
 
 axis.Date(1, at = seq(min(dates), max(dates), by = "year"), format = "%Y", las=2)
 
 ```
 
-@fig-rf-basic shows substantial outliers and seasonality, with local peaks in what looks like Q2 and end Q3. Wonder if could use fourier transforms to find a frequency (don't remember how to do that).
-
----
-
-**Box Plot**
 
 
-Let's see if chunking into years shows similar distributions. I think it makes more sense to split into end Q1 to end Q1, but as data starts at year start, lets first look at full year blocks.
+
+
+
+
+
 
 ```{r}
 #| echo: false
 #| label: fig-rf-box
-#| fig-cap: "Box plots of observed river flow by one year periods."
+#| fig-cap: "Box plots of observed river flow by ten one year periods. \none data point truncated to 600 cumecs"
+#| fig-pos: 'H'
 
 start_date = as.Date("2015-01-01")
 boundaries <- seq(start_date, max(dates), by='year')
@@ -435,23 +455,24 @@ box_data$flow = pmin(box_data$flow, winsor_cap)
 my_boxplot <- boxplot(
   flow ~ periods, 
   data = box_data,
-  main = paste0('Observed river flow per one year periods commencing ', start_date),
+  main = paste0('Observed river flow per one year periods \ncommencing ', start_date),
   xlab = 'period',
-  ylab = 'flow in cumecs (one data point truncated to 600 cumecs)'
+  ylab = 'flow in cumecs',
+  cex.lab = 0.8
   )
 
 ```
-The outliers squash the data inside the whiskers. Let's explicitly compare the main parts of the distributions inside the whiskers.
 
----
 
-**Stats**
+
+
 
 
 ```{r}
 #| echo: false
 #| label: tbl-rf-box
 #| tbl-cap: "Summary stats for each of the periods in @fig-rf-box"
+#| fig-pos: 'H'
 
 means <- aggregate(
   flow ~ periods, 
@@ -476,39 +497,8 @@ knitr::kable(
 
 ```
 
-The statistics in @tbl-rf-box show a positive gradient in all of the columns indicating that river flow is increasing year on year.
- 
----
 
-**Model river flows greater than 75 cumecs as a GPD**
-
-
-```{r}
-#| echo: false
-#| label: fig-rf-qq
-#| fig-cap: "QQ plot of sample data above mu, versus proposed gpd (mu, sigma, xi)"
-#| 
-cut_off<-75
-# data was offset, hadn't minused the cutoff before
-flow_samples <- flow_data$flow[flow_data$flow > cut_off]
-# head(flow_samples)
-# length(flow_samples)
-
-mu<-cut_off
-sigma<-29.7
-xi<-0.62
-id<-1
-
-gpd_qq_plot(sample=flow_samples, mu=mu, sigma=sigma, xi=xi, id=id)
-
-```
-
-The plot @fig-rf-qq shows that the proposed xi is too large for the sample as the extreme tail is below the y=x line. This is apparent for the extreme 6 values in the tail, out of the total of 158 observations.
-
----
-
-<br><br>
-**Analyse De-trended Data**
+\clearpage
 
 
 ```{r}
@@ -519,6 +509,7 @@ The plot @fig-rf-qq shows that the proposed xi is too large for the sample as th
 #|    - "A linear model for the median of a period"
 #|    - "Detrended box plots obtained by subtracting the model from observed flows"
 #| echo: false
+#| fig-pos: 'H'
 
 
 # quick look at de-trend
@@ -535,7 +526,8 @@ plot(
   medians$periods,
   medians$flow,
   xlab = "Period",
-  ylab = "Median flow"
+  ylab = "Median flow",
+  main = 'De-trend model'
 )
 
 abline(trend)
@@ -545,7 +537,7 @@ box_data$detrended_flow <- box_data$flow - predict(trend, newdata = box_data)
 my_boxplot_detrended <- boxplot(
   detrended_flow ~ periods, 
   data = box_data,
-  main = paste0('Detrended observed river flow per one year periods commencing ', start_date),
+  main = paste0('Detrended observed river flow per one year periods \ncommencing ', start_date),
   xlab = 'period',
   ylab = 'flow in cumecs'
   )
@@ -554,17 +546,14 @@ my_boxplot_detrended <- boxplot(
 # 
 ```
 
-
 <br><br>
-As before, looking at the summary stats gives more granular information.
-
-_Summary Stats_
 
 
 ```{r}
 #| echo: false
 #| label: tbl-detrend
 #| tbl-cap: "Summary stats for each of the periods in @fig-detrend"
+#| fig-pos: 'H'
 
 detrended_means <- aggregate(
   detrended_flow ~ periods, 
@@ -590,7 +579,40 @@ knitr::kable(
 
 ```
 
+
 ---
+
+
+**Model river flows greater than 75 cumecs as a GPD**
+
+```{r}
+#| echo: false
+#| label: fig-rf-qq
+#| fig-cap: "QQ plot of sample data above mu, versus proposed gpd (mu, sigma, xi)"
+#| 
+cut_off<-75
+# data was offset, hadn't minused the cutoff before
+flow_samples <- flow_data$flow[flow_data$flow > cut_off]
+# head(flow_samples)
+# length(flow_samples)
+
+mu<-cut_off
+sigma<-29.7
+xi<-0.62
+id<-1
+
+gpd_qq_plot(sample=flow_samples, mu=mu, sigma=sigma, xi=xi, id=id)
+
+```
+
+
+The plot @fig-rf-qq shows that the proposed xi is too large for the sample as the extreme tail is below the y=x line. This is apparent for the extreme 6 values in the tail, out of the total of 158 observations.
+
+------------------------------------------------------------------------
+
+
+
+
 
 ::: callout-tip
 ## Set yourself up for success
@@ -618,13 +640,37 @@ Does your response:
 - critically reflection on that engagement?
 :::
 
+**Reflections**
+
+In the answer to question 4, the engagement with the visualisation activity, and the reasons why the plots were chosen is explained. The evidence of engagement is via the code blocks to create the various plots and figures, which are located in the appendix. 
+
+I had to look up how to split the data for the box plot into periods and how to center the table stats. So learning 'cut' will be very useful (as was par in a previous question). Most of the rest of the knowledge came from the data science lectures. What really took me a long time (though the question doesn't ask this, is the writing of formula and working out the bijective conditions in Q1).
+
+What I would have liked to do was some kind of spectral analysis of the data to find a frequency to the seasonality. I was not satisfied with the simple de-trending. I would have liked to have mixed that with another jumpy process (bi-direction - though this would have meant dependence of the jump on the value of the continuous distribution as the flow can't go negative.)
+
+However given the scope of the assignment and my current level of knowledge, this would not have been practical.
+
+In felt my conclusion about stationarity was weak as it only used the de-trended box plot stats. I don't know if there is another method that is typically employed to provide some quantitative metrics or confidence intervals. Given more time, this would have been interesting to research and then reference. Hopefully this is something we learn on in the Masters.
+
+With the second part of question 4, I initially made a mistake with the mu=75 parameter. I had not subtracted it from the flow data and so my QQ plot didn't lay on the y=x line. I only discovered the issue by trial and error when seeing if I could manually fit better parameters.
+
+Another extension would be to write a function to fit the parameters given the observations. 
+
+Generally I have found the RStudio help to be quite user unfriendly,  but there is much better help and context specific documentation provided by your LLM of choice.
+
+I also would have preferred not to spend the time learning R which is not used in industry outside of biology, but to have stayed with Python. There is already a lot to learn, without spending time on something which I wont use outside of the course.
+
+Leaving aside R, it was useful to learn qmd, though in the finance and asset management world I have only seen people use Jupyter. I have always had people to do the reports, so it is good to learn how to use this and the formula writing for myself.
+I am also happy that qmd can be used with Python, so that is not a wasted skill.
+
+When submitting this on Sunday 11th Oct, I also realised what renders in html may not render in pdfs, e.g., gt vs >, floating objects vs held, and scaling of figures and plot labels being different. I was rendering in html as I was working, so now I know to do it pdf too, otherwise may get stuck on a delivery deadline if running close to the wind.
+
 *End of Assessment.*
 
 # Code Appendix {#sec-code-appendix}
 
-```{r ref.label=c('fig-gpd-qq', 'get-data', 'fig-rf-basic', 'fig-rf-box', 'tbl-rf-box', 
-'fig-rf-qq', 'fig-detrend', 'tbl-detrend')}
-#| echo: true
-#| eval: false
+```{r, ref.label=c('fig-gpd-qq', 'get-data', 'fig-rf-basic', 'fig-rf-box', 'tbl-rf-box', 'fig-rf-qq', 'fig-detrend', 'tbl-detrend')}
+#| echo: true 
+#| eval: false 
 #| code-fold: true
 ```
